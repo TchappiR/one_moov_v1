@@ -1,0 +1,28 @@
+# Blueprint Render — déploie l'app (Docker) + une base PostgreSQL gratuite.
+# Sur render.com : New + → Blueprint → connecte ton dépôt GitHub → Apply.
+# Renseigne GROQ_API_KEY (et plus tard PUBLIC_BASE_URL = l'URL du service) dans le dashboard.
+
+services:
+  - type: web
+    name: one-moov
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: GROQ_API_KEY          # ta clé Groq (console.groq.com) — laissée vide = mode guidé
+        sync: false
+      - key: JWT_SECRET            # généré automatiquement par Render
+        generateValue: true
+      - key: CINETPAY_MODE         # SANDBOX = paiement simulé (pas de compte marchand)
+        value: SANDBOX
+      - key: PUBLIC_BASE_URL       # à mettre = https://one-moov.onrender.com après le 1er déploiement
+        sync: false
+      - key: DATABASE_URL          # injecté depuis la base ci-dessous
+        fromDatabase:
+          name: one-moov-db
+          property: connectionString
+
+databases:
+  - name: one-moov-db
+    plan: free
