@@ -6,3 +6,5 @@ backend/.env
 node_modules/
 frontend/dist/
 *.log
+backend/.env
+backend/.venv
